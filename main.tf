@@ -48,7 +48,7 @@ resource "aws_s3_directory_bucket" "this" {
 }
 
 resource "aws_s3_bucket_logging" "this" {
-  count = local.create_bucket && length(keys(var.logging)) > 0 && !var.is_directory_bucket ? 1 : 0
+  count = local.create_bucket && length(try(keys(var.logging), [])) > 0 && !var.is_directory_bucket ? 1 : 0
 
   bucket = aws_s3_bucket.this[0].id
 
@@ -116,7 +116,7 @@ resource "aws_s3_bucket_acl" "this" {
 }
 
 resource "aws_s3_bucket_website_configuration" "this" {
-  count = local.create_bucket && length(keys(var.website)) > 0 && !var.is_directory_bucket ? 1 : 0
+  count = local.create_bucket && length(try(keys(var.website), [])) > 0 && !var.is_directory_bucket ? 1 : 0
 
   bucket                = aws_s3_bucket.this[0].id
   expected_bucket_owner = var.expected_bucket_owner
@@ -171,7 +171,7 @@ resource "aws_s3_bucket_website_configuration" "this" {
 }
 
 resource "aws_s3_bucket_versioning" "this" {
-  count = local.create_bucket && length(keys(var.versioning)) > 0 && !var.is_directory_bucket ? 1 : 0
+  count = local.create_bucket && length(try(keys(var.versioning), [])) > 0 && !var.is_directory_bucket ? 1 : 0
 
   bucket                = aws_s3_bucket.this[0].id
   expected_bucket_owner = var.expected_bucket_owner
@@ -187,7 +187,7 @@ resource "aws_s3_bucket_versioning" "this" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
-  count = local.create_bucket && length(keys(var.server_side_encryption_configuration)) > 0 ? 1 : 0
+  count = local.create_bucket && length(try(keys(var.server_side_encryption_configuration), [])) > 0 ? 1 : 0
 
   bucket                = var.is_directory_bucket ? aws_s3_directory_bucket.this[0].bucket : aws_s3_bucket.this[0].id
   expected_bucket_owner = var.expected_bucket_owner
@@ -383,7 +383,7 @@ resource "aws_s3_bucket_object_lock_configuration" "this" {
 }
 
 resource "aws_s3_bucket_replication_configuration" "this" {
-  count = local.create_bucket && length(keys(var.replication_configuration)) > 0 && !var.is_directory_bucket ? 1 : 0
+  count = local.create_bucket && length(try(keys(var.replication_configuration), [])) > 0 && !var.is_directory_bucket ? 1 : 0
 
   bucket = aws_s3_bucket.this[0].id
   role   = var.replication_configuration["role"]
